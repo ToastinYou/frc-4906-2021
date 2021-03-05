@@ -58,6 +58,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    // Ensure limelight LEDs are off when robot is disabled.
+    if (container != null && container.limelight != null) {
+      container.limelight.setLimelightLED(Constants.kLimelight.LIMELIGHT_LED.OFF);
+      container.limelight.setLimelightMode(Constants.kLimelight.LIMELIGHT_MODE.VISION_TRACKING);
+    }
   }
 
   /**
