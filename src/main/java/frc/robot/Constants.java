@@ -96,8 +96,8 @@ public final class Constants {
 		public static final double DRIVE_MAX_OUTPUT = 0.6;
 		public static final double DRIVE_DEADZONE = 0.15;
 
-		public static final int SHIFT_FWD = 2;
-		public static final int SHIFT_REV = 3;
+		public static final int SHIFT_FWD = 3;
+		public static final int SHIFT_REV = 2;
 
 		public static final int HIGH_GEAR_SOLENOID_CHANNEL = 2;
 		public static final int LOW_GEAR_SOLENOID_CHANNEL = 3;

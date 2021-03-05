@@ -68,7 +68,7 @@ public class Index extends SubsystemBase {
 
   public void timedVerticalDown() {
     runVerticalMotor(INDEX_BACK_SPEED);
-    Timer.delay(0.05); // TODO: Is this the best way to pause for half a millisecond?
+    Timer.delay(0.09); // TODO: Is this the best way to pause for half a millisecond?
     horizontalMotor.stopMotor();
     verticalMotor.stopMotor();
   }

@@ -13,8 +13,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.kLimelight;
 import frc.robot.commands.Drivetrain.*;
+import frc.robot.commands.Index.*;
+import frc.robot.commands.Shooter.*;
 import frc.robot.commands.Turret.*;
 import frc.robot.subsystems.*;
 
@@ -96,15 +99,35 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    SequentialCommandGroup trackingMode = new InstantCommand(() -> limelight.setLimelightLED(kLimelight.LIMELIGHT_LED.ON), limelight).andThen(() -> limelight.setLimelightMode(kLimelight.LIMELIGHT_MODE.VISION_TRACKING));
+
     return new SequentialCommandGroup(
       /*
       new DriveStrightFwd(drive).withTimeout(0.3),
       new WaitCommand(3),
       */
-      
-      new InstantCommand(() -> limelight.setLimelightLED(kLimelight.LIMELIGHT_LED.ON), limelight).andThen(() -> limelight.setLimelightMode(kLimelight.LIMELIGHT_MODE.VISION_TRACKING)),
+
+      trackingMode,
+      //new InstantCommand(() -> limelight.setLimelightLED(kLimelight.LIMELIGHT_LED.ON), limelight)
+      //                    .andThen(() -> limelight.setLimelightMode(kLimelight.LIMELIGHT_MODE.VISION_TRACKING)),
       new InstantCommand(intake::lowerIntake, intake),
-      new AlignTurret(turret, limelight, true)
+      new AlignTurret(turret, limelight, true),
+      new ShootForTime(shooter, 0.62, 2.25),
+      new IndexerLoad(index).withTimeout(0.15),
+      new IndexerLoad(index).withTimeout(0.27),
+      //new IndexerLoad(index).withTimeout(0.4),
+      //new InstantCommand(shooter::stop, shooter),
+      new DriveForTime(drivetrain, -0.5, 2.75),
+      new IndexerLoad(index).alongWith(new InstantCommand(intake::intake, intake).withTimeout(0.3)),
+      new DriveForTime(drivetrain, -0.5, 3),
+      new IndexerLoad(index).alongWith(new InstantCommand(intake::intake, intake).withTimeout(0.3)),
+      new DriveForTime(drivetrain, 0.8, 2),
+      new AlignTurret(turret, limelight, true),
+      //new ShootForTime(shooter, 0.65, 2.25),
+      new IndexerLoad(index).withTimeout(0.3),
+      new IndexerLoad(index).withTimeout(0.4),
+      new WaitCommand(2),
+      new InstantCommand(shooter::stop, shooter)
 
       //new IntakeLower(m_intake),
       //new InstantCommand(() -> limelight.setLimelightLED(Constants.LIMELIGHT_LED.ON), limelight).andThen(() -> limelight.setLimelightMode(Constants.LIMELIGHT_MODE.VISION_TRACKING)),
