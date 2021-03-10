@@ -66,7 +66,7 @@ public class Drivetrain extends SubsystemBase {
 
     MecanumDrive mDrive = new MecanumDrive(motorLeftFront, motorLeftRear, motorRightFront, motorRightRear);
 
-    DoubleSolenoid gearSolenoid = new DoubleSolenoid(LOW_GEAR_SOLENOID_CHANNEL, HIGH_GEAR_SOLENOID_CHANNEL);
+    DoubleSolenoid gearSolenoid = new DoubleSolenoid(HIGH_GEAR_SOLENOID_CHANNEL, LOW_GEAR_SOLENOID_CHANNEL);
 
     return new Drivetrain(motorLeftFront, motorLeftRear, motorRightFront, motorRightRear, leftEncoder, 
                           rightEncoder, dDrive, mDrive, gearSolenoid);
