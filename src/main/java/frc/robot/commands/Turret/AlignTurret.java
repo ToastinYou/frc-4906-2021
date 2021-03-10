@@ -18,18 +18,9 @@ public class AlignTurret extends CommandBase {
     private Turret turret;
     private Limelight limelight;
 
-    private boolean useTDM = false;
-    private int tdmCount = 0;
-    private int tdmThreshold = 200;
-
     public AlignTurret(Turret turret, Limelight limelight) {
-        this(turret, limelight, false);
-    }
-
-    public AlignTurret(Turret turret, Limelight limelight, boolean useTDM) {
         this.turret = turret;
         this.limelight = limelight;
-        this.useTDM = useTDM;
         
         addRequirements(turret, limelight);
     }
@@ -39,28 +30,28 @@ public class AlignTurret extends CommandBase {
 
     @Override
     public void execute() {
-        // Positive speed = Clockwise motion
-        // Negative speed = Counter-clockwise motion
+        // Positive speed -> Clockwise motion
+        // Negative speed -> Counter-clockwise motion
         double speed = limelight.getXOffset() * TURRET_P;
 
         // Limit speed to 10% motor speed in either direction.
         // This should be adjusted later to find optimal rotating speed.
-        if (speed > 0.30) { speed = 0.30; }
-        else if (speed < -0.30) { speed = -0.30; }
+        if (speed > 0.30) {
+            speed = 0.30;
+        }
+        else if (speed < -0.30) {
+            speed = -0.30;
+        }
 
         turret.setRotatorSpeed(speed);
-        tdmCount++;
     }
 
     @Override
     public boolean isFinished() {
-        // Apply T.D.M. (turret disaster mitigation) control
-        if(useTDM && tdmCount >= tdmThreshold) { return true; }
-
         // Because the Limelight's x offset has some error while targeting,
         // don't wait for it to be exactly zero, but instead within an
         // acceptable error range.
-        return Math.abs((limelight.getXOffset())) < SENSITIVITY_DEGREES;
+        return Math.abs(limelight.getXOffset()) < SENSITIVITY_DEGREES;
     }
 
     @Override

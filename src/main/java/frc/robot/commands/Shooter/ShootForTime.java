@@ -24,15 +24,22 @@ public class ShootForTime extends CommandBase {
 
   @Override
   public void execute(){
-    if (counter < target) { counter++; }
+    if (counter < target) {
+      counter++;
+    }
+
     shooter.fire(speed);
   }
 
   // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) { shooter.stop(); }
+  /* @Override
+  public void end(boolean interrupted) {
+    shooter.stop();
+  } */
 
   // Returns true when the command should end.
   @Override
-  public boolean isFinished() { return counter >= target; }
+  public boolean isFinished() {
+    return counter >= target;
+  }
 }

@@ -9,16 +9,15 @@ public class IndexerLoad extends CommandBase {
   private Index index;
 
   public IndexerLoad(Index index) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(index);
     this.index = index;
+    addRequirements(index);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    index.runVerticalMotor(CONVEYER_FWD_SPEED);
     index.runHorizontalMotor(CONVEYER_REV_SPEED);
+    index.runVerticalMotor(CONVEYER_FWD_SPEED);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,5 +30,7 @@ public class IndexerLoad extends CommandBase {
 
   // Returns true when the command should end.
   @Override
-  public boolean isFinished() { return false; }
+  public boolean isFinished() {
+    return false;
+  }
 }

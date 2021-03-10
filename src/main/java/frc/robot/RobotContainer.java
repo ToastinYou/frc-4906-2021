@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -35,6 +36,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public Air air = Air.create();
   public Drivetrain drivetrain = Drivetrain.create();
+  public Gyro gyro = Gyro.create();
   public Index index = Index.create();
   public Intake intake = Intake.create();
   public Limelight limelight = Limelight.create();
@@ -106,7 +108,7 @@ public class RobotContainer {
     // Rotate Turret
     turret.setDefaultCommand(new RotateTurret(turret, () -> xboxController.getX(Hand.kRight)));
 
-    Xbox.dpadUpButton.whenPressed(new AutoFire(shooter, index, intake, turret, limelight));
+    Xbox.dpadUpButton.whenPressed(new AutoFire());
     Xbox.dpadRightButton.whenPressed(intakeKickBackCommand);
     Xbox.dpadRightButton.whenReleased(stopIndexCommand);
 
@@ -128,7 +130,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return new SequentialCommandGroup(
-      limelightTrackingMode,
+      // My old code:
+      /* limelightTrackingMode,
       lowerIntakeCommand,
       new AlignTurret(turret, limelight, true),
       new ShootForTime(shooter, 0.62, 2.25),
@@ -146,43 +149,85 @@ public class RobotContainer {
       new IndexerLoad(index).withTimeout(0.3),
       new IndexerLoad(index).withTimeout(0.4),
       new WaitCommand(2.0),
+      stopShooterCommand */
+
+      limelightTrackingMode,
+      new WaitCommand(1.0),
+      lowerIntakeCommand,
+      new AlignTurret(turret, limelight).withTimeout(1.0),
+      new ShootForTime(shooter, 0.62, 2.0),
+      new IndexerLoad(index), 
+      new WaitCommand(0.15),
+      stopIndexCommand,
+      new WaitCommand(0.3),
+      new IndexerLoad(index),
+      new WaitCommand(0.27), 
+      stopIndexCommand,
+      new WaitCommand(0.3),
+      new IndexerLoad(index),
+      new WaitCommand(0.3), 
+      stopIndexCommand,
+      new DriveForTime(drivetrain, -0.5, 2.0),
+      new ParallelCommandGroup(
+        intakeCommand,
+        new IndexerLoad(index),
+        new WaitCommand(0.3)),
+      stopIndexCommand,
+      stopIntakeCommand,
+      new DriveForTime(drivetrain, -0.5, 2.0),
+      intakeCommand,
+      new IndexerLoad(index),
+      new WaitCommand(0.3),
+      stopIndexCommand,
+      stopIntakeCommand,
+      new DriveForTime(drivetrain, 0.8, 2.0),
+      new AlignTurret(turret, limelight).withTimeout(1.0),
+      new IndexerLoad(index),
+      new WaitCommand(0.5),
+      limelightDriverMode,
+      stopIndexCommand,
+      new WaitCommand(0.4),
       stopShooterCommand
 
-      /*
-      new ShootForTime(m_shooter, .62, 2.25),
-      // 62% at 2.25 seconds seems to work
+      // Grenier's new code:
+      /* new InstantCommand(() -> limelight.LimeOn()),
+      new WaitCommand(1), 
+      new IntakeLower(m_intake),
+      new AlignTurret(m_turret, limelight, true).withTimeout(1), 
+      new ShootForTime(m_shooter, .62, 2),
+      // 62% at 3 seconds seems to work
       new IndexerLoad(m_indexer), 
       new WaitCommand(.15),
       new IndexerStop(m_indexer),
-      new WaitCommand(.4),
+      new WaitCommand(.3),
       new IndexerLoad(m_indexer),
       new WaitCommand(.27), 
       new IndexerStop(m_indexer),
-      new WaitCommand(.4),
-      new IndexerStop(m_indexer),
-      new DriveForTime(drive, -.5, 2.75),
-      new IntakeLoader(m_intake),
-      new IndexerLoad(m_indexer),
       new WaitCommand(.3),
+      new IndexerLoad(m_indexer),
+      new WaitCommand(.3), 
+      new IndexerStop(m_indexer),
+      new DriveForTime(drive, -.5, 2),
+      new ParallelCommandGroup(
+        new IntakeLoader(m_intake),
+        new IndexerLoad(m_indexer),
+        new WaitCommand(.3)),
       new IndexerStop(m_indexer),
       new IntakeStop(m_intake),
-      new DriveForTime(drive, -.5, 3),
+      new DriveForTime(drive, -.5, 2),
       new IntakeLoader(m_intake),
       new IndexerLoad(m_indexer),
       new WaitCommand(.3),
       new IndexerStop(m_indexer),
       new IntakeStop(m_intake),
       new DriveForTime(drive, .8, 2),
-      new AlignTurret(m_turret, limelight, true), 
+      new AlignTurret(m_turret, limelight, true).withTimeout(1),
       new IndexerLoad(m_indexer), 
-      new WaitCommand(.3),
+      new WaitCommand(.5),
+      new InstantCommand(() -> limelight.LimeOff()),
       new IndexerStop(m_indexer),
       new WaitCommand(.4),
-      new IndexerLoad(m_indexer),
-      new WaitCommand(.4), 
-      new IndexerStop(m_indexer),
-      new WaitCommand(2),
-      */
+      new ShooterStop(m_shooter) */
     );
   }
 }

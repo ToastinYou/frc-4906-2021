@@ -31,6 +31,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     container = new RobotContainer();
+    container.gyro.calibrate();
   }
 
   /**
@@ -54,6 +55,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    container.gyro.reset();
   }
 
   @Override
@@ -70,6 +72,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    container.gyro.reset();
+
     m_autonomousCommand = container.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -87,6 +91,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    container.gyro.reset(); // TODO: Should we reset the gyro here??
+
     // Ensure no commands are running.
     CommandScheduler.getInstance().cancelAll();
 
@@ -109,6 +115,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
+    container.gyro.reset();
+    
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }

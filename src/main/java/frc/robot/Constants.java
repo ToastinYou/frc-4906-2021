@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
@@ -96,9 +97,6 @@ public final class Constants {
 		public static final double DRIVE_MAX_OUTPUT = 0.6;
 		public static final double DRIVE_DEADZONE = 0.15;
 
-		public static final int SHIFT_FWD = 3;
-		public static final int SHIFT_REV = 2;
-
 		public static final int HIGH_GEAR_SOLENOID_CHANNEL = 2;
 		public static final int LOW_GEAR_SOLENOID_CHANNEL = 3;
 
@@ -113,40 +111,33 @@ public final class Constants {
 		public static final double RIGHT_MOTOR_SPEED = -0.25; // Turret Right
 		public static final double LEFT_MOTOR_SPEED = 0.25; // Turret Left
 		public static final Hand ROTATE_TURRET = Hand.kLeft;
-		public static final double CONTROL_DEADBAND = 0.10;
+		public static final double CONTROL_DEADBAND = 0.20;
 
 		// TODO: What is TURRET_P??
-		public static final double TURRET_P = 0.03;
+		public static final double TURRET_P = 0.1;
 
 		public static final double SENSITIVITY_DEGREES = 0.01;
-		public static final double SENSITIVITY_VELOCITY = 0;
-
-		// TODO: Purpose???
-		//public void setDefaultCommand(RotateWithJoystick rotateWithJoystick) { }
+		public static final double SENSITIVITY_VELOCITY = 0.0;
 	}
 
 	public static final class kShooter {
 		public static final int RIGHT_MOTOR_ID = 3; // Shooter Right
 		public static final int LEFT_MOTOR_ID = 12; // Shooter Left
 
-		public static final double FWD_SPEED = 1; // Shooter Forward
-		public static final double REV_SPEED = -1; // Shoter Reverse
+		public static final double FWD_SPEED = 1.0; // Shooter Forward
+		public static final double REV_SPEED = -1.0; // Shoter Reverse
 	}
 
 	public static final class kIndex {
 		public static final int CONVEYER_HORIZONTAL_MOTOR_ID = 11; // Conveyor Horizontal
 		public static final int CONVEYER_VERTICAL_MOTOR_ID = 5; // Conveyor Vertical
-
-		// TODO: What's this???
-		public static final int SHOOTER_INTAKE_MOTOR_ID = 21; //Pre loader Wheels
+		public static final int SHOOTER_INTAKE_MOTOR_ID = 21; // Pre loader Wheels
 
 		// Feed in
 		// TODO: Wrong values ?? - same values -->.
-		public static final double CONVEYER_FWD_SPEED = -0.5; // Conveyor Forward
-		public static final double CONVEYER_REV_SPEED = -0.5; // Conveyor Reverse
-
-		// TODO: What's this???
-		public static final double SHOOTER_LOADER_SPEED_FWD = 0.85; // Shooter PreLoader
+		public static final double CONVEYER_FWD_SPEED = -0.6; // Conveyor Forward
+		public static final double CONVEYER_REV_SPEED = -0.6; // Conveyor Reverse
+		public static final double SHOOTER_LOADER_SPEED_FWD = 1.0; // Shooter PreLoader
 
 		// Feed out
 		// TODO: Wrong values ?? - same values -->.
@@ -160,12 +151,12 @@ public final class Constants {
 	public static final class kIntake {
 		public static final int INTAKE_MOTOR_ID = 4;
 
-		// piston (double solenoid) that raises and lowers the intake
-		public static final int INTAKE_RAISE_SOLENOID_CHANNEL = 0;
-		public static final int INTAKE_LOWER_SOLENOID_CHANNEL = 1;
+		// piston (double solenoid) that lowers and raises the intake
+		public static final int INTAKE_LOWER_SOLENOID_CHANNEL = 0;
+		public static final int INTAKE_RAISE_SOLENOID_CHANNEL = 1;
 
-		public static final Value INTAKE_LOWER_VALUE = Value.kForward;
-		public static final Value INTAKE_RAISE_VALUE = Value.kReverse;
+		public static final Value INTAKE_LOWER_VALUE = Value.kReverse;
+		public static final Value INTAKE_RAISE_VALUE = Value.kForward;
 
 		public static final double INTAKE_MOTOR_SPEED = 0.5;
 		public static final double EJECT_MOTOR_SPEED = -0.5;
@@ -200,5 +191,9 @@ public final class Constants {
 			VISION_TRACKING,
 			DRIVER_CAMERA
 		}
+	}
+
+	public static final class kGyro {
+		public static final SPI.Port GYRO_PORT = SPI.Port.kOnboardCS0;
 	}
 }
