@@ -83,7 +83,6 @@ public final class Constants {
 	}
 	
 	public static final class kDrivetrain {
-		// Drivetrain motors are VictorSPX
 		public static final int MOTOR_LEFT_FRONT_ID = 14;
 		public static final int MOTOR_LEFT_REAR_ID = 13;
 		public static final int MOTOR_RIGHT_FRONT_ID = 1;
