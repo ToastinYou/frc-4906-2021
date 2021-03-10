@@ -9,12 +9,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.kLimelight;
+import frc.robot.commandgroups.AutoFire;
 import frc.robot.commands.Drivetrain.*;
 import frc.robot.commands.Index.*;
 import frc.robot.commands.Shooter.*;
@@ -39,10 +41,19 @@ public class RobotContainer {
   public Shooter shooter = Shooter.create();
   public Turret turret = Turret.create();
 
-  //private Command arcadeDrive = new ArcadeDrive(drivetrain);
   //private Command gtaDrive = new GTADrive(drivetrain);
-  //private Command mecanumDrive = new MecanumDrive(drivetrain);
-  //private Command tankDrive = new TankDrive(drivetrain);
+
+  // Commonly-Used Instant Commands
+  public InstantCommand raiseIntakeCommand = new InstantCommand(intake::raiseIntake, intake);
+  public InstantCommand lowerIntakeCommand = new InstantCommand(intake::lowerIntake, intake);
+  public InstantCommand intakeCommand = new InstantCommand(intake::intake, intake);
+  public InstantCommand intakeKickBackCommand = new InstantCommand(index::timedVerticalDown, index);
+  public InstantCommand stopIntakeCommand = new InstantCommand(intake::stopIntake, intake);
+  public InstantCommand stopShooterCommand = new InstantCommand(shooter::stop, shooter);
+  public InstantCommand stopIndexCommand = new InstantCommand(index::stopIndex, index);
+
+  public SequentialCommandGroup limelightTrackingMode = new InstantCommand(() -> limelight.setLimelightLED(kLimelight.LIMELIGHT_LED.ON), limelight).andThen(() -> limelight.setLimelightMode(kLimelight.LIMELIGHT_MODE.VISION_TRACKING));
+  public SequentialCommandGroup limelightDriverMode = new InstantCommand(() -> limelight.setLimelightLED(kLimelight.LIMELIGHT_LED.OFF), limelight).andThen(() -> limelight.setLimelightMode(kLimelight.LIMELIGHT_MODE.DRIVER_CAMERA));
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -90,7 +101,24 @@ public class RobotContainer {
     Xbox.bumperRightButton.whenPressed(new InstantCommand(limelight::toggleLimelightMode, limelight));
 
     // Toggle Drive Gear
-    Logi.logiButton11.whenPressed(new InstantCommand(drivetrain::toggleDriveGear, drivetrain));
+    Logi.logiButton3.whenPressed(new InstantCommand(drivetrain::toggleDriveGear, drivetrain));
+
+    // Rotate Turret
+    turret.setDefaultCommand(new RotateTurret(turret, () -> xboxController.getX(Hand.kRight)));
+
+    Xbox.dpadUpButton.whenPressed(new AutoFire(shooter, index, intake, turret, limelight));
+    Xbox.dpadRightButton.whenPressed(intakeKickBackCommand);
+    Xbox.dpadRightButton.whenReleased(stopIndexCommand);
+
+    Xbox.xButton.whenPressed(new IndexerLoad(index));
+    Xbox.xButton.whenReleased(stopIndexCommand);
+
+    // Could convert these into a while held, which calls intake::intake and ends with intake::stopIntake.
+    Xbox.yButton.whenPressed(intakeCommand);
+    Xbox.yButton.whenReleased(stopIntakeCommand);
+
+    Xbox.bButton.whenPressed(lowerIntakeCommand);
+    Xbox.bButton.whenReleased(raiseIntakeCommand);
   }
 
   /**
@@ -99,18 +127,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    SequentialCommandGroup trackingMode = new InstantCommand(() -> limelight.setLimelightLED(kLimelight.LIMELIGHT_LED.ON), limelight).andThen(() -> limelight.setLimelightMode(kLimelight.LIMELIGHT_MODE.VISION_TRACKING));
-
     return new SequentialCommandGroup(
-      /*
-      new DriveStrightFwd(drive).withTimeout(0.3),
-      new WaitCommand(3),
-      */
-
-      trackingMode,
-      //new InstantCommand(() -> limelight.setLimelightLED(kLimelight.LIMELIGHT_LED.ON), limelight)
-      //                    .andThen(() -> limelight.setLimelightMode(kLimelight.LIMELIGHT_MODE.VISION_TRACKING)),
-      new InstantCommand(intake::lowerIntake, intake),
+      limelightTrackingMode,
+      lowerIntakeCommand,
       new AlignTurret(turret, limelight, true),
       new ShootForTime(shooter, 0.62, 2.25),
       new IndexerLoad(index).withTimeout(0.15),
@@ -118,21 +137,16 @@ public class RobotContainer {
       //new IndexerLoad(index).withTimeout(0.4),
       //new InstantCommand(shooter::stop, shooter),
       new DriveForTime(drivetrain, -0.5, 2.75),
-      new IndexerLoad(index).alongWith(new InstantCommand(intake::intake, intake).withTimeout(0.3)),
-      new DriveForTime(drivetrain, -0.5, 3),
-      new IndexerLoad(index).alongWith(new InstantCommand(intake::intake, intake).withTimeout(0.3)),
-      new DriveForTime(drivetrain, 0.8, 2),
+      new IndexerLoad(index).alongWith(intakeCommand.withTimeout(0.3)),
+      new DriveForTime(drivetrain, -0.5, 3.0),
+      new IndexerLoad(index).alongWith(intakeCommand.withTimeout(0.3)),
+      new DriveForTime(drivetrain, 0.8, 2.0),
       new AlignTurret(turret, limelight, true),
       //new ShootForTime(shooter, 0.65, 2.25),
       new IndexerLoad(index).withTimeout(0.3),
       new IndexerLoad(index).withTimeout(0.4),
-      new WaitCommand(2),
-      new InstantCommand(shooter::stop, shooter)
-
-      //new IntakeLower(m_intake),
-      //new InstantCommand(() -> limelight.setLimelightLED(Constants.LIMELIGHT_LED.ON), limelight).andThen(() -> limelight.setLimelightMode(Constants.LIMELIGHT_MODE.VISION_TRACKING)),
-      //new AlignTurret(m_turret, limelight, true),
-      //new InstantCommand(() -> limelight.setLimelightLED(Constants.LIMELIGHT_LED.OFF), limelight),
+      new WaitCommand(2.0),
+      stopShooterCommand
 
       /*
       new ShootForTime(m_shooter, .62, 2.25),
@@ -169,11 +183,6 @@ public class RobotContainer {
       new IndexerStop(m_indexer),
       new WaitCommand(2),
       */
-
-      //new ShooterStop(m_shooter)
     );
-
-    // An ExampleCommand will run in autonomous
-    //return new ExampleCommand();
   }
 }

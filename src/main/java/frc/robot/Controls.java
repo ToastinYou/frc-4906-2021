@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 import static frc.robot.Constants.*;
 import frc.robot.Constants.kButtons.kLogitechButtons;
@@ -27,20 +28,25 @@ public class Controls {
     public static JoystickButton stickLeftButton = new JoystickButton(xboxController, kButtons.kXboxButtons.XB_STICK_BUTTON_LEFT);
     public static JoystickButton stickRightButton = new JoystickButton(xboxController, kButtons.kXboxButtons.XB_STICK_BUTTON_RIGHT);
 
-    public static double getXboxRawAxis(int axis) { return xboxController.getRawAxis(axis); }
+    public static POVButton dpadUpButton = new POVButton(xboxController, kButtons.kXboxButtons.XB_DPAD_UP);
+    public static POVButton dpadRightButton = new POVButton(xboxController, kButtons.kXboxButtons.XB_DPAD_RIGHT);
+    public static POVButton dpadDownButton = new POVButton(xboxController, kButtons.kXboxButtons.XB_DPAD_DOWN);
+    public static POVButton dpadLeftButton = new POVButton(xboxController, kButtons.kXboxButtons.XB_DPAD_LEFT);
+
+    public static double getXboxRawAxis(int axis) {
+      return xboxController.getRawAxis(axis);
+    }
   
     public static double getXboxRawAxis(int axis, double deadzone) {
-      double speed = getXboxRawAxis(axis);
-  
-      if (Math.abs(speed) < deadzone) {
-        return 0.0;
-      }
-  
-      return speed;
+      return Utilities.applyDeadband(getXboxRawAxis(axis), deadzone);
     }
     
-    public static double getXboxLeftStick() { return getXboxRawAxis(kXboxButtons.XB_STICK_Y_LEFT, kDrivetrain.TURN_DEADZONE); }
-    public static double getXboxRightStick() { return getXboxRawAxis(kXboxButtons.XB_STICK_Y_RIGHT, kDrivetrain.DRIVE_DEADZONE); }
+    public static double getXboxLeftStick() {
+      return getXboxRawAxis(kXboxButtons.XB_STICK_Y_LEFT, kDrivetrain.TURN_DEADZONE);
+    }
+    public static double getXboxRightStick() {
+      return getXboxRawAxis(kXboxButtons.XB_STICK_Y_RIGHT, kDrivetrain.DRIVE_DEADZONE);
+    }
   }
 
   public static class Logi {
@@ -57,16 +63,12 @@ public class Controls {
     public static JoystickButton logiButton11 = new JoystickButton(xboxController, kButtons.kLogitechButtons.LOGI_BUTTON_11);
     public static JoystickButton logiButton12 = new JoystickButton(xboxController, kButtons.kLogitechButtons.LOGI_BUTTON_12);
 
-    public static double getLogitechRawAxis(int axis) { return logitechController.getRawAxis(axis); }
+    public static double getLogitechRawAxis(int axis) {
+      return logitechController.getRawAxis(axis);
+    }
   
     public static double getLogitechRawAxis(int axis, double deadzone) {
-      double speed = getLogitechRawAxis(axis);
-  
-      if (Math.abs(speed) < deadzone) {
-        return 0.0;
-      }
-  
-      return speed;
+      return Utilities.applyDeadband(getLogitechRawAxis(axis), deadzone);
     }
 
     public static double getLogiX() { return getLogitechRawAxis(kLogitechButtons.LOGI_STICK_X, kDrivetrain.TURN_DEADZONE); }
