@@ -113,7 +113,6 @@ public final class Constants {
 		public static final Hand ROTATE_TURRET = Hand.kLeft;
 		public static final double CONTROL_DEADBAND = 0.20;
 
-		// TODO: What is TURRET_P??
 		public static final double TURRET_P = 0.1;
 
 		public static final double SENSITIVITY_DEGREES = 0.01;
@@ -175,7 +174,7 @@ public final class Constants {
 
 	// Limelight
 	public static final class kLimelight {
-		// TODO: Measurement type??
+		// TODO: Measurement type?
 		public static final double HEIGHT_ABOVE_GROUND = 2.75;
 		public static final double TARGET_HEIGHT = 7.5;
 		public static final double SHOT_HEIGHT = TARGET_HEIGHT - HEIGHT_ABOVE_GROUND;
