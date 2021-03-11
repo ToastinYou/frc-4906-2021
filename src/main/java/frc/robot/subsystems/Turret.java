@@ -24,6 +24,7 @@ public class Turret extends SubsystemBase {
   public static Turret create() {
     CANSparkMax turretMotor = new CANSparkMax(MOTOR_ID, MotorType.kBrushless);
 
+    turretMotor.restoreFactoryDefaults();
     turretMotor.setIdleMode(IdleMode.kBrake);
     turretMotor.setInverted(true);
 

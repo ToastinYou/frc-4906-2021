@@ -18,6 +18,9 @@ public class Shooter extends SubsystemBase {
     WPI_TalonFX leftMotor = new WPI_TalonFX(LEFT_MOTOR_ID);
     WPI_TalonFX rightMotor = new WPI_TalonFX(RIGHT_MOTOR_ID);
 
+    leftMotor.configFactoryDefault();
+    rightMotor.configFactoryDefault();
+
     leftMotor.setNeutralMode(NeutralMode.Coast);
     rightMotor.setNeutralMode(NeutralMode.Coast);
 

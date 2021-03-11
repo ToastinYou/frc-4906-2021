@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.kIndex.*;
 
+import java.util.Collection;
+
 public class Index extends SubsystemBase {
   private WPI_VictorSPX verticalMotor, horizontalMotor;
   private CANSparkMax shooterLoaderMotor;
@@ -24,6 +26,10 @@ public class Index extends SubsystemBase {
     WPI_VictorSPX horizontalMotor = new WPI_VictorSPX(CONVEYER_HORIZONTAL_MOTOR_ID);
     WPI_VictorSPX verticalMotor = new WPI_VictorSPX(CONVEYER_VERTICAL_MOTOR_ID);
     CANSparkMax shooterLoaderMotor = new CANSparkMax(SHOOTER_INTAKE_MOTOR_ID, MotorType.kBrushless);
+
+    horizontalMotor.configFactoryDefault();
+    verticalMotor.configFactoryDefault();
+    shooterLoaderMotor.restoreFactoryDefaults();
 
     horizontalMotor.setNeutralMode(NeutralMode.Brake);
     verticalMotor.setNeutralMode(NeutralMode.Brake);

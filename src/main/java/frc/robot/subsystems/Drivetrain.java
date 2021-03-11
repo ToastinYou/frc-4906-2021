@@ -41,16 +41,13 @@ public class Drivetrain extends SubsystemBase {
     WPI_TalonFX motorLeftRear = new WPI_TalonFX(MOTOR_LEFT_REAR_ID);
     WPI_TalonFX motorRightFront = new WPI_TalonFX(MOTOR_RIGHT_FRONT_ID);
     WPI_TalonFX motorRightRear = new WPI_TalonFX(MOTOR_RIGHT_REAR_ID);
+    WPI_TalonFX[] motors = { motorLeftFront, motorLeftRear, motorRightFront, motorRightRear };
 
-    motorLeftFront.setNeutralMode(NeutralMode.Brake);
-    motorLeftRear.setNeutralMode(NeutralMode.Brake);
-    motorRightFront.setNeutralMode(NeutralMode.Brake);
-    motorRightRear.setNeutralMode(NeutralMode.Brake);
-
-    motorLeftFront.configNeutralDeadband(0.001);
-    motorLeftRear.configNeutralDeadband(0.001);
-    motorRightFront.configNeutralDeadband(0.001);
-    motorRightRear.configNeutralDeadband(0.001);
+    for (WPI_TalonFX motor : motors) {
+      motor.configFactoryDefault();
+      motor.setNeutralMode(NeutralMode.Brake);
+      motor.configNeutralDeadband(0.001);
+    }
 
     TalonFXSensorCollection leftEncoder = new TalonFXSensorCollection(motorLeftFront);
     TalonFXSensorCollection rightEncoder = new TalonFXSensorCollection(motorRightFront);

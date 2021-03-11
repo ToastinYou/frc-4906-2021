@@ -13,13 +13,13 @@ public class Intake extends SubsystemBase {
   private CANSparkMax intakeMotor;
   private DoubleSolenoid intakePistons;
 
-  enum State {
+  private enum State {
     WAITING_FOR_BALL,
     CLEAR_INTAKE,
     INTAKE_KICKBACK,
   };
-  State state = State.WAITING_FOR_BALL;
-  Timer wait_timer = new Timer();
+  private State state = State.WAITING_FOR_BALL;
+  private Timer timer = new Timer();
 
   public Intake(CANSparkMax intakeMotor, DoubleSolenoid intakePistons) {
     this.intakeMotor = intakeMotor;
@@ -28,6 +28,7 @@ public class Intake extends SubsystemBase {
 
   public static Intake create() {
     CANSparkMax intakeMotor = new CANSparkMax(INTAKE_MOTOR_ID, MotorType.kBrushless);
+    intakeMotor.restoreFactoryDefaults();
     intakeMotor.setIdleMode(IdleMode.kCoast);
     intakeMotor.setInverted(true);
 
