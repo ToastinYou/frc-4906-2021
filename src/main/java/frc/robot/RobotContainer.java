@@ -67,11 +67,19 @@ public class RobotContainer {
 
   private void setDefaultCommands() {
     // Inline command example.. https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-    // This will execute a command with drivetrain.arcadeDrive until ended/interrupted, 
-    // and then it will call drivetrain.stopMotors.
-    // Arcade Drive - Logi
-    new RunCommand(() -> drivetrain.arcadeDrive(Logi.getLogiY(), Logi.getLogiZ(), true))
-      .andThen(drivetrain::stopMotors, drivetrain);
+
+    drivetrain.positionClosedLoop = true;
+    if (drivetrain.positionClosedLoop) {
+      new RunCommand(() -> drivetrain.driveUsingSensors(Logi.getLogiY(), Logi.getLogiZ()), drivetrain)
+        .andThen(drivetrain::stopMotors, drivetrain);
+    }
+    else {
+      // This will execute a command with drivetrain.arcadeDrive until ended/interrupted, 
+      // and then it will call drivetrain.stopMotors.
+      // Arcade Drive - Logi
+      new RunCommand(() -> drivetrain.arcadeDrive(Logi.getLogiY(), Logi.getLogiZ(), true), drivetrain)
+        .andThen(drivetrain::stopMotors, drivetrain);
+    }
 
     // Mecanum Drive - Logi
     //new RunCommand(() -> drivetrain.driveCartesian(Logi.getLogiX(), Logi.getLogiY(), Logi.getLogiZ()))
